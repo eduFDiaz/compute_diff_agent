@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import argparse
 import logging
 import json
 import os
@@ -237,56 +238,24 @@ Output requirements:
 # Example usage
 # -----------------------------
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Compute a semantic diff between two network configs.")
+    parser.add_argument("config1", type=Path, help="Path to the current config file (CONFIG_1).")
+    parser.add_argument("config2", type=Path, help="Path to the target config file (CONFIG_2).")
+    parser.add_argument("--vendor", default="cisco_ios", help="Vendor/platform string (default: cisco_ios).")
+    args = parser.parse_args()
+
     logger = _configure_run_logging()
 
-    config_1 = """
-hostname R1
-
-interface GigabitEthernet0/0
- description Uplink to ISP
- ip address 10.10.10.1 255.255.255.0
- no shutdown
-
-interface GigabitEthernet0/1
- description Customer Port
- switchport mode access
- switchport access vlan 100
- no shutdown
-
-vlan 100
- name CUSTOMER_VLAN
-
-ip routing
-""".strip()
-
-    config_2 = """
-hostname R1
-
-interface GigabitEthernet0/0
- description Uplink to ISP
- ip address 10.10.20.1 255.255.255.0
- no shutdown
-
-interface GigabitEthernet0/1
- description Customer Port
- switchport mode access
- switchport access vlan 200
- no shutdown
-
-vlan 200
- name CUSTOMER_VLAN
-
-ip routing
-""".strip()
+    config_1 = Path(args.config1).read_text(encoding="utf-8").strip()
+    config_2 = Path(args.config2).read_text(encoding="utf-8").strip()
 
     try:
         app = NetworkDiffPrototype(
-            model="gpt-4.1-mini",  # cheap and fast for testing
             temperature=0.0,
         )
 
         result = app.run(
-            vendor="cisco_ios",
+            vendor=args.vendor,
             config_1=config_1,
             config_2=config_2,
         )

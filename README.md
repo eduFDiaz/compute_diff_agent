@@ -25,5 +25,5 @@ OPENAI_API_KEY=...
 ## Run
 
 ```bash
-uv run python network_diff_prototype.py
+uv run python network_diff_prototype.py config.cfg target.cfg --vendor cisco_ios
 ```
