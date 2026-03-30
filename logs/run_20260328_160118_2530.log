@@ -1,0 +1,140 @@
+2026-03-28 16:01:18 | INFO | Log file: /mnt/c/Users/ferna/OneDrive/Documents/compute_diff_agent/logs/run_20260328_160118_2530.log
+2026-03-28 16:01:31 | INFO | === CONFIG 1 ===
+hostname R1
+
+interface GigabitEthernet0/0
+ description Uplink to ISP
+ ip address 10.10.10.1 255.255.255.0
+ no shutdown
+
+interface GigabitEthernet0/1
+ description Customer Port
+ switchport mode access
+ switchport access vlan 100
+ no shutdown
+
+vlan 100
+ name CUSTOMER_VLAN
+
+ip routing
+2026-03-28 16:01:31 | INFO | === CONFIG 2 ===
+hostname R1
+
+interface GigabitEthernet0/0
+ description Uplink to ISP
+ ip address 10.10.20.1 255.255.255.0
+ no shutdown
+
+interface GigabitEthernet0/1
+ description Customer Port
+ switchport mode access
+ switchport access vlan 200
+ no shutdown
+
+vlan 200
+ name CUSTOMER_VLAN
+
+ip routing
+2026-03-28 16:01:31 | INFO | === DIFF ===
+{
+  "vendor": "cisco_ios",
+  "summary": "Update IP address on GigabitEthernet0/0 and change access VLAN on GigabitEthernet0/1 from VLAN 100 to VLAN 200. Remove VLAN 100 and add VLAN 200 with the same name.",
+  "changes": [
+    {
+      "path": "interface GigabitEthernet0/0",
+      "operation": "replace",
+      "field": "ip_address",
+      "before": "10.10.10.1 255.255.255.0",
+      "after": "10.10.20.1 255.255.255.0",
+      "reason": "IP address changed on uplink interface"
+    },
+    {
+      "path": "interface GigabitEthernet0/1",
+      "operation": "replace",
+      "field": "access_vlan",
+      "before": "100",
+      "after": "200",
+      "reason": "Access VLAN changed from 100 to 200"
+    },
+    {
+      "path": "vlan 100",
+      "operation": "remove",
+      "field": "name",
+      "before": "CUSTOMER_VLAN",
+      "after": null,
+      "reason": "VLAN 100 removed"
+    },
+    {
+      "path": "vlan 200",
+      "operation": "add",
+      "field": "name",
+      "before": null,
+      "after": "CUSTOMER_VLAN",
+      "reason": "VLAN 200 added with same name as VLAN 100"
+    }
+  ],
+  "warnings": []
+}
+2026-03-28 16:01:31 | INFO | === COMMANDS ===
+{
+  "summary": "Updated IP address on GigabitEthernet0/0, changed access VLAN on GigabitEthernet0/1 from VLAN 100 to VLAN 200, removed VLAN 100, and added VLAN 200 with the same name CUSTOMER_VLAN.",
+  "commands": [
+    "interface GigabitEthernet0/0",
+    "no ip address 10.10.10.1 255.255.255.0",
+    "ip address 10.10.20.1 255.255.255.0",
+    "exit",
+    "interface GigabitEthernet0/1",
+    "switchport access vlan 200",
+    "exit",
+    "no vlan 100",
+    "vlan 200",
+    "name CUSTOMER_VLAN",
+    "exit"
+  ],
+  "apply_config": "configure terminal\ninterface GigabitEthernet0/0\nno ip address 10.10.10.1 255.255.255.0\nip address 10.10.20.1 255.255.255.0\nexit\ninterface GigabitEthernet0/1\nswitchport access vlan 200\nexit\nno vlan 100\nvlan 200\nname CUSTOMER_VLAN\nexit\nend",
+  "rollback": [
+    "interface GigabitEthernet0/0",
+    "no ip address 10.10.20.1 255.255.255.0",
+    "ip address 10.10.10.1 255.255.255.0",
+    "exit",
+    "interface GigabitEthernet0/1",
+    "switchport access vlan 100",
+    "exit",
+    "no vlan 200",
+    "vlan 100",
+    "name CUSTOMER_VLAN",
+    "exit"
+  ],
+  "rollback_config": "configure terminal\ninterface GigabitEthernet0/0\nno ip address 10.10.20.1 255.255.255.0\nip address 10.10.10.1 255.255.255.0\nexit\ninterface GigabitEthernet0/1\nswitchport access vlan 100\nexit\nno vlan 200\nvlan 100\nname CUSTOMER_VLAN\nexit\nend",
+  "warnings": []
+}
+2026-03-28 16:01:31 | INFO | === APPLY CONFIG (PASTE-READY) ===
+configure terminal
+interface GigabitEthernet0/0
+no ip address 10.10.10.1 255.255.255.0
+ip address 10.10.20.1 255.255.255.0
+exit
+interface GigabitEthernet0/1
+switchport access vlan 200
+exit
+no vlan 100
+vlan 200
+name CUSTOMER_VLAN
+exit
+end
+2026-03-28 16:01:31 | INFO | === ROLLBACK CONFIG (PASTE-READY) ===
+configure terminal
+interface GigabitEthernet0/0
+no ip address 10.10.20.1 255.255.255.0
+ip address 10.10.10.1 255.255.255.0
+exit
+interface GigabitEthernet0/1
+switchport access vlan 100
+exit
+no vlan 200
+vlan 100
+name CUSTOMER_VLAN
+exit
+end
+2026-03-28 16:01:31 | INFO | === VALIDATION ERRORS ===
+[]
