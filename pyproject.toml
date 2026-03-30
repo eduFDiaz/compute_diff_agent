@@ -1,0 +1,13 @@
+[project]
+name = "compute-diff-agent"
+version = "0.1.0"
+description = "Prototype for semantic network config diff + CLI command generation"
+requires-python = ">=3.10"
+dependencies = [
+  "python-dotenv>=1.0.0",
+  "pydantic>=2.0.0",
+  "langchain-openai>=0.1.0",
+]
+
+[tool.uv]
+# uv will create `.venv/` and `uv.lock` via `uv sync`.
