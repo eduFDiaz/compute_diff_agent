@@ -241,7 +241,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Compute a semantic diff between two network configs.")
     parser.add_argument("config1", type=Path, help="Path to the current config file (CONFIG_1).")
     parser.add_argument("config2", type=Path, help="Path to the target config file (CONFIG_2).")
-    parser.add_argument("--vendor", default="cisco_ios", help="Vendor/platform string (default: cisco_ios).")
+    parser.add_argument("--vendor", default="ekinops_one621", help="Vendor/platform string (default: ekinops_one621).")
     args = parser.parse_args()
 
     logger = _configure_run_logging()
