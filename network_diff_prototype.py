@@ -109,7 +109,7 @@ class NetworkDiffPrototype:
                 temperature=temperature,
             )
         elif provider == "fuelix":
-            _model = model or "claude-sonnet-4-6"
+            _model = model or "gpt-4o-mini"
             api_key = os.getenv("FUELIX_API_KEY")
             if not api_key:
                 raise RuntimeError("FUELIX_API_KEY is not set.")

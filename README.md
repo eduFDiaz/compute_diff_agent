@@ -48,7 +48,7 @@ uv run python network_diff_prototype.py config.cfg target.cfg --vendor ekinops_o
 uv run python network_diff_prototype.py config.cfg target.cfg --vendor ekinops_one621 --provider ollama --model qwen3.5
 ```
 
-# Fuelix (default model: claude-sonnet-4-6)
+# Fuelix (default model: gpt-4o-mini)
 ```bash
 uv run python network_diff_prototype.py config.cfg target.cfg --vendor ekinops_one621 --provider fuelix
 ```
