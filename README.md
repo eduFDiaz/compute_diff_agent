@@ -13,13 +13,18 @@ This repo is managed with **uv**.
 uv sync
 ```
 
-3) Provide your API key (either environment variable or `.env` file):
+3) Provide your API key(s) (either environment variable or `.env` file):
 
-- Environment variable: `OPENAI_API_KEY=...`
-- Or create a `.env` file with:
+| Provider | Environment variable |
+|----------|---------------------|
+| OpenAI   | `OPENAI_API_KEY`    |
+| Fuelix   | `FUELIX_API_KEY`    |
+
+Example `.env` file:
 
 ```env
 OPENAI_API_KEY=...
+FUELIX_API_KEY=...
 ```
 
 ## Run
@@ -30,15 +35,25 @@ uv run python network_diff_prototype.py config.cfg target.cfg --vendor ekinops_o
 
 # OpenAI (default, unchanged behaviour)
 ```bash
-python network_diff_prototype.py config.cfg target.cfg --vendor ekinops_one621
+uv run python network_diff_prototype.py config.cfg target.cfg --vendor ekinops_one621
 ```
 
-# Ollama phi4-mini
+# Ollama phi4-mini (local)
 ```bash
-python network_diff_prototype.py config.cfg target.cfg --vendor ekinops_one621 --provider ollama
+uv run python network_diff_prototype.py config.cfg target.cfg --vendor ekinops_one621 --provider ollama
 ```
 
 # Ollama with a different model
 ```bash
-python network_diff_prototype.py config.cfg target.cfg --vendor ekinops_one621 --provider ollama  --model qwen3.5
+uv run python network_diff_prototype.py config.cfg target.cfg --vendor ekinops_one621 --provider ollama --model qwen3.5
+```
+
+# Fuelix (default model: claude-sonnet-4-6)
+```bash
+uv run python network_diff_prototype.py config.cfg target.cfg --vendor ekinops_one621 --provider fuelix
+```
+
+# Fuelix with a different model
+```bash
+uv run python network_diff_prototype.py config.cfg target.cfg --vendor ekinops_one621 --provider fuelix --model claude-opus-4-5
 ```

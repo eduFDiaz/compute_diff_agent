@@ -87,7 +87,7 @@ class CommandOutput(BaseModel):
 # -----------------------------
 # LLM wrapper
 # -----------------------------
-PROVIDERS = ("openai", "ollama")
+PROVIDERS = ("openai", "ollama", "fuelix")
 
 
 class NetworkDiffPrototype:
@@ -107,6 +107,17 @@ class NetworkDiffPrototype:
             self.llm = ChatOllama(
                 model=_model,
                 temperature=temperature,
+            )
+        elif provider == "fuelix":
+            _model = model or "claude-sonnet-4-6"
+            api_key = os.getenv("FUELIX_API_KEY")
+            if not api_key:
+                raise RuntimeError("FUELIX_API_KEY is not set.")
+            self.llm = ChatOpenAI(
+                model=_model,
+                temperature=temperature,
+                api_key=api_key,
+                base_url="https://api.fuelix.ai/v1",
             )
         else:
             _model = model or "gpt-4.1-mini"
@@ -266,7 +277,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--model",
         default=None,
-        help="Model name override. Defaults: openai=gpt-4.1-mini, ollama=phi4-mini.",
+        help="Model name override. Defaults: openai=gpt-4.1-mini, ollama=phi4-mini, fuelix=claude-sonnet-4-6.",
     )
     args = parser.parse_args()
 
@@ -289,6 +300,7 @@ if __name__ == "__main__":
         )
 
         logger.info("Vendor: %s", args.vendor)
+        logger.info("Provider: %s", args.provider)
 
         logger.info("=== CONFIG 1 ===\n%s", config_1)
         logger.info("=== CONFIG 2 ===\n%s", config_2)
