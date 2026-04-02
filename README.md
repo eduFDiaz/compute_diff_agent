@@ -27,3 +27,18 @@ OPENAI_API_KEY=...
 ```bash
 uv run python network_diff_prototype.py config.cfg target.cfg --vendor ekinops_one621
 ```
+
+# OpenAI (default, unchanged behaviour)
+```bash
+python network_diff_prototype.py config.cfg target.cfg --vendor ekinops_one621
+```
+
+# Ollama phi4-mini
+```bash
+python network_diff_prototype.py config.cfg target.cfg --vendor ekinops_one621 --provider ollama
+```
+
+# Ollama with a different model
+```bash
+python network_diff_prototype.py config.cfg target.cfg --vendor ekinops_one621 --provider ollama  --model qwen3.5
+```

@@ -10,6 +10,7 @@ from typing import List, Literal, Optional
 
 from dotenv import load_dotenv
 from pydantic import BaseModel, Field, ValidationError
+from langchain_ollama import ChatOllama
 from langchain_openai import ChatOpenAI
 
 
@@ -86,23 +87,37 @@ class CommandOutput(BaseModel):
 # -----------------------------
 # LLM wrapper
 # -----------------------------
+PROVIDERS = ("openai", "ollama")
+
+
 class NetworkDiffPrototype:
     def __init__(
         self,
-        model: str = "gpt-4.1-mini",
+        model: str | None = None,
         temperature: float = 0.0,
+        provider: str = "openai",
     ) -> None:
+        if provider not in PROVIDERS:
+            raise ValueError(f"provider must be one of {PROVIDERS}, got {provider!r}")
+
         load_dotenv()
 
-        api_key = os.getenv("OPENAI_API_KEY")
-        if not api_key:
-            raise RuntimeError("OPENAI_API_KEY is not set.")
-
-        self.llm = ChatOpenAI(
-            model=model,
-            temperature=temperature,
-            api_key=api_key,
-        )
+        if provider == "ollama":
+            _model = model or "phi4-mini"
+            self.llm = ChatOllama(
+                model=_model,
+                temperature=temperature,
+            )
+        else:
+            _model = model or "gpt-4.1-mini"
+            api_key = os.getenv("OPENAI_API_KEY")
+            if not api_key:
+                raise RuntimeError("OPENAI_API_KEY is not set.")
+            self.llm = ChatOpenAI(
+                model=_model,
+                temperature=temperature,
+                api_key=api_key,
+            )
 
         # First pass returns a typed diff object
         self.diff_llm = self.llm.with_structured_output(ConfigDiff)
@@ -242,6 +257,17 @@ if __name__ == "__main__":
     parser.add_argument("config1", type=Path, help="Path to the current config file (CONFIG_1).")
     parser.add_argument("config2", type=Path, help="Path to the target config file (CONFIG_2).")
     parser.add_argument("--vendor", default="ekinops_one621", help="Vendor/platform string (default: ekinops_one621).")
+    parser.add_argument(
+        "--provider",
+        choices=PROVIDERS,
+        default="openai",
+        help="LLM provider: 'openai' (default) or 'ollama' (local, uses phi4-mini by default).",
+    )
+    parser.add_argument(
+        "--model",
+        default=None,
+        help="Model name override. Defaults: openai=gpt-4.1-mini, ollama=phi4-mini.",
+    )
     args = parser.parse_args()
 
     logger = _configure_run_logging()
@@ -251,7 +277,9 @@ if __name__ == "__main__":
 
     try:
         app = NetworkDiffPrototype(
+            model=args.model,
             temperature=0.0,
+            provider=args.provider,
         )
 
         result = app.run(
@@ -259,6 +287,8 @@ if __name__ == "__main__":
             config_1=config_1,
             config_2=config_2,
         )
+
+        logger.info("Vendor: %s", args.vendor)
 
         logger.info("=== CONFIG 1 ===\n%s", config_1)
         logger.info("=== CONFIG 2 ===\n%s", config_2)
