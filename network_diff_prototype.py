@@ -10,7 +10,6 @@ from typing import List, Literal, Optional
 
 from dotenv import load_dotenv
 from pydantic import BaseModel, Field, ValidationError
-from langchain_ollama import ChatOllama
 from langchain_openai import ChatOpenAI
 
 
@@ -87,7 +86,7 @@ class CommandOutput(BaseModel):
 # -----------------------------
 # LLM wrapper
 # -----------------------------
-PROVIDERS = ("openai", "ollama", "fuelix")
+PROVIDERS = ("fuelix",)
 
 
 class NetworkDiffPrototype:
@@ -102,33 +101,16 @@ class NetworkDiffPrototype:
 
         load_dotenv()
 
-        if provider == "ollama":
-            _model = model or "phi4-mini"
-            self.llm = ChatOllama(
-                model=_model,
-                temperature=temperature,
-            )
-        elif provider == "fuelix":
-            _model = model or "gpt-4o-mini"
-            api_key = os.getenv("FUELIX_API_KEY")
-            if not api_key:
-                raise RuntimeError("FUELIX_API_KEY is not set.")
-            self.llm = ChatOpenAI(
-                model=_model,
-                temperature=temperature,
-                api_key=api_key,
-                base_url="https://api.fuelix.ai/v1",
-            )
-        else:
-            _model = model or "gpt-4.1-mini"
-            api_key = os.getenv("OPENAI_API_KEY")
-            if not api_key:
-                raise RuntimeError("OPENAI_API_KEY is not set.")
-            self.llm = ChatOpenAI(
-                model=_model,
-                temperature=temperature,
-                api_key=api_key,
-            )
+        _model = model or "gemini-3-pro-preview"
+        api_key = os.getenv("FUELIX_API_KEY")
+        if not api_key:
+            raise RuntimeError("FUELIX_API_KEY is not set.")
+        self.llm = ChatOpenAI(
+            model=_model,
+            temperature=temperature,
+            api_key=api_key,
+            base_url="https://api.fuelix.ai/v1",
+        )
 
         # First pass returns a typed diff object
         self.diff_llm = self.llm.with_structured_output(ConfigDiff)
@@ -271,13 +253,13 @@ if __name__ == "__main__":
     parser.add_argument(
         "--provider",
         choices=PROVIDERS,
-        default="openai",
-        help="LLM provider: 'openai' (default) or 'ollama' (local, uses phi4-mini by default).",
+        default="fuelix",
+        help="LLM provider (default: fuelix).",
     )
     parser.add_argument(
         "--model",
         default=None,
-        help="Model name override. Defaults: openai=gpt-4.1-mini, ollama=phi4-mini, fuelix=claude-sonnet-4-6.",
+        help="Model name override. Default: gemini-3-pro-preview.",
     )
     args = parser.parse_args()
 

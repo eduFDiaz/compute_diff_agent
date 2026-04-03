@@ -17,43 +17,22 @@ uv sync
 
 | Provider | Environment variable |
 |----------|---------------------|
-| OpenAI   | `OPENAI_API_KEY`    |
 | Fuelix   | `FUELIX_API_KEY`    |
 
 Example `.env` file:
 
 ```env
-OPENAI_API_KEY=...
 FUELIX_API_KEY=...
 ```
 
 ## Run
 
+# Fuelix (default model: gemini-3-pro-preview)
 ```bash
 uv run python network_diff_prototype.py config.cfg target.cfg --vendor ekinops_one621
-```
-
-# OpenAI (default, unchanged behaviour)
-```bash
-uv run python network_diff_prototype.py config.cfg target.cfg --vendor ekinops_one621
-```
-
-# Ollama phi4-mini (local)
-```bash
-uv run python network_diff_prototype.py config.cfg target.cfg --vendor ekinops_one621 --provider ollama
-```
-
-# Ollama with a different model
-```bash
-uv run python network_diff_prototype.py config.cfg target.cfg --vendor ekinops_one621 --provider ollama --model qwen3.5
-```
-
-# Fuelix (default model: gpt-4o-mini)
-```bash
-uv run python network_diff_prototype.py config.cfg target.cfg --vendor ekinops_one621 --provider fuelix
 ```
 
 # Fuelix with a different model
 ```bash
-uv run python network_diff_prototype.py config.cfg target.cfg --vendor ekinops_one621 --provider fuelix --model claude-opus-4-5
+uv run python network_diff_prototype.py config.cfg target.cfg --vendor ekinops_one621 --model gemini-3-pro-preview
 ```
